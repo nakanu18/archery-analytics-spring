@@ -8,10 +8,10 @@ public class Archer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int id;
+    public int id;
 
     @Column(name = "name")
-    private String name;
+    public String name;
 
     @Override
     public String toString() {

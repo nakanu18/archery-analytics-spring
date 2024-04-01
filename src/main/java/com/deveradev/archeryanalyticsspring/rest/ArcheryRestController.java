@@ -3,10 +3,7 @@ package com.deveradev.archeryanalyticsspring.rest;
 import com.deveradev.archeryanalyticsspring.entity.Archer;
 import com.deveradev.archeryanalyticsspring.service.ArcheryRestService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -29,13 +26,22 @@ public class ArcheryRestController {
         return archers;
     }
 
-    @GetMapping("/archer/{archerId}")
+    @GetMapping("/archers/{archerId}")
     public Archer findArcherById(@PathVariable int archerId) {
         Optional<Archer> archer = archeryRestService.findArcherById(archerId);
 
         if (archer.isEmpty()) {
-            throw new ArcherNotFoundException("Archer id not found: " + archerId);
+            throw new NotFoundException("Archer id not found: " + archerId);
         }
         return archer.get();
+    }
+
+    @PostMapping("/archers")
+    public Archer addArcher(@RequestBody Archer archer) {
+        archer.id = 0;
+        if (archer.name == null || archer.name.isBlank()) {
+            throw new BadRequestException("Missing fields: name");
+        }
+        return archeryRestService.addArcher(archer);
     }
 }

@@ -4,6 +4,7 @@ import com.deveradev.archeryanalyticsspring.dao.ArcherRepository;
 import com.deveradev.archeryanalyticsspring.entity.Archer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -23,5 +24,10 @@ public class ArcheryRestService {
 
     public Optional<Archer> findArcherById(int id) {
         return archerRepository.findById(id);
+    }
+
+    @Transactional
+    public Archer addArcher(Archer archer) {
+        return archerRepository.save(archer);
     }
 }
