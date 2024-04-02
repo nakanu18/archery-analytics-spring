@@ -30,4 +30,9 @@ public class ArcheryRestService {
     public Archer addArcher(Archer archer) {
         return archerRepository.save(archer);
     }
+
+    @Transactional
+    public void deleteArcher(int id) {
+        archerRepository.deleteById(id);
+    }
 }
