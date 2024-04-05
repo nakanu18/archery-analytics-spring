@@ -1,6 +1,7 @@
 package com.deveradev.archeryanalyticsspring.rest;
 
 import com.deveradev.archeryanalyticsspring.entity.Archer;
+import com.deveradev.archeryanalyticsspring.entity.Round;
 import com.deveradev.archeryanalyticsspring.service.ArcheryRestService;
 import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/archery")
+@RequestMapping("/api")
 public class ArcheryRestController {
     private ArcheryRestService archeryRestService;
 
@@ -20,6 +21,8 @@ public class ArcheryRestController {
     public ArcheryRestController(ArcheryRestService archeryRestService) {
         this.archeryRestService = archeryRestService;
     }
+
+    // Archers
 
     @GetMapping("/archers")
     public List<Archer> findAllArchers() {
@@ -31,12 +34,7 @@ public class ArcheryRestController {
 
     @GetMapping("/archers/{id}")
     public Archer findArcherById(@PathVariable int id) {
-        Optional<Archer> archer = archeryRestService.findArcherById(id);
-
-        if (archer.isEmpty()) {
-            throw new NotFoundException("Archer id not found: " + id);
-        }
-        return archer.get();
+        return archeryRestService.findArcherById(id);
     }
 
     @PostMapping("/archers")
@@ -50,10 +48,6 @@ public class ArcheryRestController {
 
     @DeleteMapping("/archers/{id}")
     public ResponseEntity<Object> deleteArcher(@PathVariable int id) {
-        Optional<Archer> archer = archeryRestService.findArcherById(id);
-        if (archer.isEmpty()) {
-            throw new NotFoundException("Archer id not found: " + id);
-        }
         archeryRestService.deleteArcher(id);
 
         return new ResponseEntity<>("Archer #" + id + " successfully deleted", HttpStatus.OK);
