@@ -56,9 +56,12 @@ public class ArcheryRestService {
 
     // Rounds
 
-    @Query("SELECT r FROM Round r WHERE r.archer.id = ?1")
     public List<Round> findAllRoundsForArcherId(int archerId) {
-        // No further implementation needed, query is defined in @Query annotation
-        return roundRepository.findAll();
+        return roundRepository.findAllRoundsForArcherId(archerId);
+    }
+
+    @Transactional
+    public Round addRound(Round round) {
+        return roundRepository.save(round);
     }
 }
