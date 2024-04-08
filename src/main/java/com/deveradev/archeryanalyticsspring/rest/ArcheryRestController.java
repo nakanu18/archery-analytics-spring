@@ -1,6 +1,7 @@
 package com.deveradev.archeryanalyticsspring.rest;
 
 import com.deveradev.archeryanalyticsspring.entity.Archer;
+import com.deveradev.archeryanalyticsspring.entity.End;
 import com.deveradev.archeryanalyticsspring.entity.Round;
 import com.deveradev.archeryanalyticsspring.entity.RoundDTO;
 import com.deveradev.archeryanalyticsspring.service.ArcheryRestService;
@@ -24,7 +25,9 @@ public class ArcheryRestController {
         this.archeryRestService = archeryRestService;
     }
 
+    //
     // Archers
+    //
 
     @GetMapping("/archers")
     public List<Archer> findAllArchers() {
@@ -57,7 +60,9 @@ public class ArcheryRestController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+    //
     // Rounds
+    //
 
     @GetMapping("/rounds/archer/{archerId}")
     public List<Round> findAllRoundsForArcherId(@PathVariable int archerId) {
@@ -72,4 +77,16 @@ public class ArcheryRestController {
         round.archer = archeryRestService.findArcherById(roundDTO.archerId);
         return archeryRestService.addRound(round);
     }
+
+    @DeleteMapping("/rounds/{roundId}")
+    public ResponseEntity<Object> deleteRound(@PathVariable int roundId) {
+        archeryRestService.deleteRound(roundId);
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+//    @PostMapping("/rounds/{roundId}/ends")
+//    public End addEndToRound(@RequestBody End end) {
+//
+//    }
 }

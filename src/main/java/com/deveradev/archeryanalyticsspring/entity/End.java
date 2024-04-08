@@ -10,13 +10,13 @@ public class End {
     @Column(name = "id")
     public int id;
 
-    @Column(name = "number")
-    public int number;
+    @Column(name = "row")
+    public int row;
 
     @Column(name = "values")
     public String values; // e.g. "X X 10 9 8 7 0"
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "round_id")
     public Round round;
 
@@ -24,7 +24,7 @@ public class End {
     public String toString() {
         return "End{" +
                 "id=" + id +
-                ", number=" + number +
+                ", row=" + row +
                 ", values='" + values + '\'' +
                 ", round=" + round +
                 '}';

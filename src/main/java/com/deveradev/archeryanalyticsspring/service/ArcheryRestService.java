@@ -52,6 +52,7 @@ public class ArcheryRestService {
             throw new NotFoundException("Archer id not found: " + id);
         }
         archerRepository.deleteById(id);
+        // TODO: delete any else associated
     }
 
     // Rounds
@@ -63,5 +64,10 @@ public class ArcheryRestService {
     @Transactional
     public Round addRound(Round round) {
         return roundRepository.save(round);
+    }
+
+    @Transactional
+    public void deleteRound(int roundId) {
+
     }
 }

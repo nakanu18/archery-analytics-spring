@@ -5,6 +5,8 @@ USE `archery_analytics`;
 -- Table structure for table archer
 --
 
+DROP TABLE IF EXISTS `end`;
+DROP TABLE IF EXISTS `round`;
 DROP TABLE IF EXISTS `archer`;
 
 CREATE TABLE `archer` (
@@ -16,7 +18,7 @@ CREATE TABLE `archer` (
 CREATE TABLE `round` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `archer_id` INT NOT NULL,
-  `date` DATE NOT NULL,  -- Stores the date the round was shot  
+  `date` DATE DEFAULT NULL,  -- Stores the date the round was shot  
   FOREIGN KEY (`archer_id`) REFERENCES `archer`(`id`),  -- Links round to archer table
   PRIMARY KEY (`id`)
 );
@@ -24,7 +26,7 @@ CREATE TABLE `round` (
 CREATE TABLE `end` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `round_id` INT NOT NULL,
-  `number` INT NOT NULL,  -- End number within the round (e.g., End 1, End 2)
+  `row` INT NOT NULL,  -- End row within the round (e.g., End 1, End 2)
   `value` VARCHAR(255),  -- Stores end value as string with delimiter (e.g., "10 9 8")
   FOREIGN KEY (`round_id`) REFERENCES `round`(`id`),
   PRIMARY KEY (`id`)
@@ -32,7 +34,7 @@ CREATE TABLE `end` (
 
 
 --
--- Data for table archer
+-- Data for tables
 --
 
 INSERT INTO `archer` VALUES
@@ -40,4 +42,9 @@ INSERT INTO `archer` VALUES
   (2,'Emma'),
   (3,'Avani'),
   (4,'Yuri'),
-  (5,'Juan');
+  (5,'Alex');
+
+INSERT INTO `round` VALUES
+  (1, 1, null),
+  (2, 5, null),
+  (3, 5, null);  
