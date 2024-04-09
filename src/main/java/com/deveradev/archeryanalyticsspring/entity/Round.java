@@ -1,5 +1,6 @@
 package com.deveradev.archeryanalyticsspring.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.Date;
@@ -17,6 +18,7 @@ public class Round {
 
     @ManyToOne
     @JoinColumn(name = "archer_id")
+    @JsonIgnore
     public Archer archer;
 
     @Override
@@ -28,4 +30,3 @@ public class Round {
                 '}';
     }
 }
-

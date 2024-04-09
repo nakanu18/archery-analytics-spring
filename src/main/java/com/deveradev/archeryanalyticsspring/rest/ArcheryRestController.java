@@ -1,19 +1,18 @@
 package com.deveradev.archeryanalyticsspring.rest;
 
 import com.deveradev.archeryanalyticsspring.entity.Archer;
-import com.deveradev.archeryanalyticsspring.entity.End;
 import com.deveradev.archeryanalyticsspring.entity.Round;
 import com.deveradev.archeryanalyticsspring.entity.RoundDTO;
 import com.deveradev.archeryanalyticsspring.service.ArcheryRestService;
-import org.apache.coyote.Response;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api")
@@ -33,7 +32,6 @@ public class ArcheryRestController {
     public List<Archer> findAllArchers() {
         List<Archer> archers = archeryRestService.findAllArchers();
 
-        System.out.println("Archers: " + archers.size());
         return archers;
     }
 
@@ -64,18 +62,19 @@ public class ArcheryRestController {
     // Rounds
     //
 
-    @GetMapping("/rounds/archer/{archerId}")
-    public List<Round> findAllRoundsForArcherId(@PathVariable int archerId) {
-        return archeryRestService.findAllRoundsForArcherId(archerId);
-    }
-
     @PostMapping("/rounds")
-    public Round addRound(@RequestBody RoundDTO roundDTO) {
-        Round round = new Round();
-        round.id = 0;
-        round.date = new Date();
-        round.archer = archeryRestService.findArcherById(roundDTO.archerId);
-        return archeryRestService.addRound(round);
+    public Round addRound(@RequestBody @Valid RoundDTO roundDTO) {
+        try {
+            String format = "yyyy-MM-dd hh:mma";
+            Round round = new Round();
+
+            round.id = 0;
+            round.date = new SimpleDateFormat(format).parse(roundDTO.date);
+            round.archer = archeryRestService.findArcherById(roundDTO.archerId);
+            return archeryRestService.addRound(round);
+        } catch(ParseException e) {
+            throw new BadRequestException("Invalid date format: " + e.getMessage());
+        }
     }
 
     @DeleteMapping("/rounds/{roundId}")
@@ -83,6 +82,11 @@ public class ArcheryRestController {
         archeryRestService.deleteRound(roundId);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @GetMapping("/rounds/archer/{archerId}")
+    public List<Round> findAllRoundsForArcherId(@PathVariable int archerId) {
+        return archeryRestService.findAllRoundsForArcherId(archerId);
     }
 
 //    @PostMapping("/rounds/{roundId}/ends")

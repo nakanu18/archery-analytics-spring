@@ -34,7 +34,7 @@ public class ArcheryRestService {
         Optional<Archer> archer = archerRepository.findById(id);
 
         if (archer.isEmpty()) {
-            throw new NotFoundException("Archer id not found: " + id);
+            throw new NotFoundException("Archer #id not found: " + id);
         }
         return archer.get();
     }
@@ -49,17 +49,17 @@ public class ArcheryRestService {
         Optional<Archer> archer = archerRepository.findById(id);
 
         if (archer.isEmpty()) {
-            throw new NotFoundException("Archer id not found: " + id);
+            throw new NotFoundException("Archer #id not found: " + id);
         }
+
+        for (Round round : archer.get().rounds) {
+            roundRepository.deleteById(round.id);
+        }
+        archer.get().rounds = null;
         archerRepository.deleteById(id);
-        // TODO: delete any else associated
     }
 
     // Rounds
-
-    public List<Round> findAllRoundsForArcherId(int archerId) {
-        return roundRepository.findAllRoundsForArcherId(archerId);
-    }
 
     @Transactional
     public Round addRound(Round round) {
@@ -68,6 +68,17 @@ public class ArcheryRestService {
 
     @Transactional
     public void deleteRound(int roundId) {
+        Optional<Round> round = roundRepository.findById(roundId);
 
+        if (round.isEmpty()) {
+            throw new NotFoundException("Round #id not found: " + roundId);
+        }
+        roundRepository.deleteById(roundId);
     }
+
+    public List<Round> findAllRoundsForArcherId(int archerId) {
+        return roundRepository.findAllRoundsForArcherId(archerId);
+    }
+
+
 }
