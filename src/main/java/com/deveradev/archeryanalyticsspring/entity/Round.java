@@ -11,15 +11,39 @@ public class Round {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    public int id;
+    private int id;
 
     @Column(name = "date")
-    public Date date;
+    private Date date;
 
     @ManyToOne
     @JoinColumn(name = "archer_id")
     @JsonIgnore
-    public Archer archer;
+    private Archer archer;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
+
+    public Archer getArcher() {
+        return archer;
+    }
+
+    public void setArcher(Archer archer) {
+        this.archer = archer;
+    }
 
     @Override
     public String toString() {

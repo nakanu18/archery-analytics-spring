@@ -52,10 +52,10 @@ public class ArcheryRestService {
             throw new NotFoundException("Archer #id not found: " + id);
         }
 
-        for (Round round : archer.get().rounds) {
-            roundRepository.deleteById(round.id);
+        for (Round round : archer.get().getRounds()) {
+            roundRepository.deleteById(round.getId());
         }
-        archer.get().rounds = null;
+        archer.get().setRounds(null);
         archerRepository.deleteById(id);
     }
 

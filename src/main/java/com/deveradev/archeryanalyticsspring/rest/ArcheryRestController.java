@@ -43,11 +43,8 @@ public class ArcheryRestController {
     }
 
     @PostMapping("/archers")
-    public Archer addArcher(@RequestBody Archer archer) {
-        archer.id = 0;
-        if (archer.name == null || archer.name.isBlank()) {
-            throw new BadRequestException("Missing fields: name");
-        }
+    public Archer addArcher(@Valid @RequestBody Archer archer) {
+        archer.setId(0);
         return archeryRestService.addArcher(archer);
     }
 
@@ -63,14 +60,14 @@ public class ArcheryRestController {
     //
 
     @PostMapping("/rounds")
-    public Round addRound(@RequestBody @Valid RoundDTO roundDTO) {
+    public Round addRound(@Valid @RequestBody RoundDTO roundDTO) {
         try {
             String format = "yyyy-MM-dd hh:mma";
             Round round = new Round();
 
-            round.id = 0;
-            round.date = new SimpleDateFormat(format).parse(roundDTO.date);
-            round.archer = archeryRestService.findArcherById(roundDTO.archerId);
+            round.setId(0);
+            round.setDate(new SimpleDateFormat(format).parse(roundDTO.date));
+            round.setArcher(archeryRestService.findArcherById(roundDTO.archerId));
             return archeryRestService.addRound(round);
         } catch(ParseException e) {
             throw new BadRequestException("Invalid date format: " + e.getMessage());
