@@ -21,11 +21,30 @@ public class Round {
     @JsonIgnore
     private Archer archer;
 
-    public int getId() {
+    @Column(name = "num_ends")
+    private Integer numEnds;
+
+    @Column(name = "num_arrows_per_end")
+    private Integer numArrowsPerEnd;
+
+    @Column(name = "dist_m")
+    private Integer distM;
+
+    @Column(name = "target_size_cm")
+    private Integer targetSizeCM;
+
+    public Round(RoundDTO dto) {
+        this.numEnds = dto.numEnds;
+        this.numArrowsPerEnd = dto.numArrowsPerEnd;
+        this.distM = dto.distM;
+        this.targetSizeCM = dto.targetSizeCM;
+    }
+
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -45,12 +64,48 @@ public class Round {
         this.archer = archer;
     }
 
+    public Integer getNumEnds() {
+        return numEnds;
+    }
+
+    public void setNumEnds(Integer numEnds) {
+        this.numEnds = numEnds;
+    }
+
+    public Integer getNumArrowsPerEnd() {
+        return numArrowsPerEnd;
+    }
+
+    public void setNumArrowsPerEnd(Integer numArrowsPerEnd) {
+        this.numArrowsPerEnd = numArrowsPerEnd;
+    }
+
+    public Integer getDistM() {
+        return distM;
+    }
+
+    public void setDistM(Integer distM) {
+        this.distM = distM;
+    }
+
+    public Integer getTargetSizeCM() {
+        return targetSizeCM;
+    }
+
+    public void setTargetSizeCM(Integer targetSizeCM) {
+        this.targetSizeCM = targetSizeCM;
+    }
+
     @Override
     public String toString() {
         return "Round{" +
                 "id=" + id +
                 ", date=" + date +
                 ", archer=" + archer +
+                ", numEnds=" + numEnds +
+                ", numArrowsPerEnd=" + numArrowsPerEnd +
+                ", distM=" + distM +
+                ", targetSizeCM=" + targetSizeCM +
                 '}';
     }
 }

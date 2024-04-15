@@ -63,7 +63,7 @@ public class ArcheryRestController {
     public Round addRound(@Valid @RequestBody RoundDTO roundDTO) {
         try {
             String format = "yyyy-MM-dd hh:mma";
-            Round round = new Round();
+            Round round = new Round(roundDTO);
 
             round.setId(0);
             round.setDate(new SimpleDateFormat(format).parse(roundDTO.date));

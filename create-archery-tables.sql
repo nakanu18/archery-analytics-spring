@@ -18,7 +18,11 @@ CREATE TABLE `archer` (
 CREATE TABLE `round` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `archer_id` INT NOT NULL,
-  `date` DATE DEFAULT NULL,  -- Stores the date the round was shot  
+  `date` DATE DEFAULT NULL,  -- Stores the date the round was shot
+  `num_ends` INT NOT NULL,
+  `num_arrows_per_end` INT NOT NULL,
+  `dist_m` INT NOT NULL,
+  `target_size_cm` INT NOT NULL,
   FOREIGN KEY (`archer_id`) REFERENCES `archer`(`id`),  -- Links round to archer table
   PRIMARY KEY (`id`)
 );
