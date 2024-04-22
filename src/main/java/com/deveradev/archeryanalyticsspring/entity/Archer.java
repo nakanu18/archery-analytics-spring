@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotEmpty;
 import java.util.List;
 
 @Entity
-@Table(name="archer")
+@Table(name = "archer")
 public class Archer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
