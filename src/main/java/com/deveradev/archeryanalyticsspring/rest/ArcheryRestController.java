@@ -17,7 +17,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api")
 public class ArcheryRestController {
-    private ArcheryRestService archeryRestService;
+    private final ArcheryRestService archeryRestService;
 
     @Autowired
     public ArcheryRestController(ArcheryRestService archeryRestService) {
@@ -30,9 +30,7 @@ public class ArcheryRestController {
 
     @GetMapping("/archers")
     public List<Archer> findAllArchers() {
-        List<Archer> archers = archeryRestService.findAllArchers();
-
-        return archers;
+        return archeryRestService.findAllArchers();
     }
 
     @GetMapping("/archers/{id}")

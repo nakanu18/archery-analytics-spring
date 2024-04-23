@@ -1,5 +1,6 @@
 package com.deveradev.archeryanalyticsspring;
 
+import com.deveradev.archeryanalyticsspring.entity.Archer;
 import com.deveradev.archeryanalyticsspring.service.ArcheryRestService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.Matchers;
@@ -15,6 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,12 +46,14 @@ public class ArcheryRestControllerTest {
 
     @BeforeEach
     public void beforeEach() {
-        jdbc.execute(sqlCreateArcher);
     }
 
     @Test
     public void testGetArchers_Success() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/archers"))
+        jdbc.execute(sqlCreateArcher);
+
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get("/api/archers");
+        mockMvc.perform(requestBuilder)
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.hasSize(1)))
@@ -58,7 +62,10 @@ public class ArcheryRestControllerTest {
 
     @Test
     public void testGetArchersById_Success() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/archers/1"))
+        jdbc.execute(sqlCreateArcher);
+
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get("/api/archers/1");
+        mockMvc.perform(requestBuilder)
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.name", Matchers.is("Alex de Vera")));
@@ -66,11 +73,30 @@ public class ArcheryRestControllerTest {
 
     @Test
     public void testGetArchersById_InvalidId() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/archers/2"))
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get("/api/archers/2");
+        mockMvc.perform(requestBuilder)
                 .andExpect(MockMvcResultMatchers.status().is4xxClientError())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.status", Matchers.is(404)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message", Matchers.is("Archer #id not found: 2")));
+    }
+
+    @Test
+    public void testAddArcher_Success() throws Exception {
+        Archer newArcher = new Archer();
+        newArcher.setName("Chris de Vera");
+
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.post("/api/archers")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(newArcher));
+
+        mockMvc.perform(requestBuilder)
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id", Matchers.is(1)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.name", Matchers.is("Chris de Vera")))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.rounds", Matchers.nullValue()));
+
     }
 
     @AfterEach
