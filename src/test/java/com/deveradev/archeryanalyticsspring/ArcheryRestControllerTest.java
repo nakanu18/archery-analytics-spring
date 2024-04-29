@@ -148,7 +148,7 @@ public class ArcheryRestControllerTest {
     }
 
     @Test
-    public void testAddRound_Success() throws Exception {
+    public void testAddRoundForArcher_Success() throws Exception {
         jdbc.execute(sqlCreateArcher);
 
         RoundDTO newRound = new RoundDTO();
@@ -159,7 +159,7 @@ public class ArcheryRestControllerTest {
         newRound.distM = 50;
         newRound.targetSizeCM = 122;
 
-        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.post("/api/rounds")
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.post("/api/rounds/archer")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(newRound));
 
@@ -170,7 +170,30 @@ public class ArcheryRestControllerTest {
     }
 
     @Test
-    public void testAddRound_Failure_InvalidDate() throws Exception {
+    public void testAddRoundForArcher_Failure_InvalidArcheryId() throws Exception {
+        jdbc.execute(sqlCreateArcher);
+
+        RoundDTO newRound = new RoundDTO();
+        newRound.date = "2024-04-24 10:10am";
+        newRound.archerId = 100;
+        newRound.numEnds = 10;
+        newRound.numArrowsPerEnd = 3;
+        newRound.distM = 50;
+        newRound.targetSizeCM = 122;
+
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.post("/api/rounds/archer")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(newRound));
+
+        mockMvc.perform(requestBuilder)
+                .andExpect(MockMvcResultMatchers.status().isNotFound())
+                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.status", Matchers.is(404)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message", Matchers.is("Archer #id not found: 100")));
+    }
+
+    @Test
+    public void testAddRoundForArcher_Failure_InvalidDate() throws Exception {
         jdbc.execute(sqlCreateArcher);
 
         RoundDTO newRound = new RoundDTO();
@@ -181,7 +204,7 @@ public class ArcheryRestControllerTest {
         newRound.distM = 50;
         newRound.targetSizeCM = 122;
 
-        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.post("/api/rounds")
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.post("/api/rounds/archer")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(newRound));
 
@@ -203,6 +226,19 @@ public class ArcheryRestControllerTest {
 
         mockMvc.perform(requestBuilder)
                 .andExpect(MockMvcResultMatchers.status().isNoContent());
+    }
+
+    @Test
+    public void testDeleteRound_Failure_InvalidId() throws Exception {
+        jdbc.execute(sqlCreateArcher);
+
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.delete("/api/rounds/100");
+
+        mockMvc.perform(requestBuilder)
+                .andExpect(MockMvcResultMatchers.status().is4xxClientError())
+                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.status", Matchers.is(404)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message", Matchers.is("Round #id not found: 100")));
     }
 
     @Test

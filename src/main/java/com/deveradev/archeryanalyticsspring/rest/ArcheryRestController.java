@@ -57,8 +57,8 @@ public class ArcheryRestController {
     // Rounds
     //
 
-    @PostMapping("/rounds")
-    public Round addRound(@Valid @RequestBody RoundDTO roundDTO) {
+    @PostMapping("/rounds/archer")
+    public Round addRoundForArcher(@Valid @RequestBody RoundDTO roundDTO) {
         try {
             String format = "yyyy-MM-dd hh:mma";
             Round round = new Round(roundDTO);
