@@ -24,7 +24,9 @@ public class ArcheryRestService {
         this.roundRepository = roundRepository;
     }
 
+    //
     // Archers
+    //
 
     public List<Archer> findAllArchers() {
         return archerRepository.findAll();
@@ -53,13 +55,16 @@ public class ArcheryRestService {
         }
 
         for (Round round : archer.get().getRounds()) {
+            round.setArcher(null);
             roundRepository.deleteById(round.getId());
         }
         archer.get().setRounds(null);
         archerRepository.deleteById(id);
     }
 
+    //
     // Rounds
+    //
 
     @Transactional
     public Round addRound(Round round) {

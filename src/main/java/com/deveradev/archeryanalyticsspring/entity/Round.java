@@ -33,6 +33,9 @@ public class Round {
     @Column(name = "target_size_cm")
     private Integer targetSizeCM;
 
+    public Round() {
+    }
+
     public Round(RoundDTO dto) {
         this.numEnds = dto.numEnds;
         this.numArrowsPerEnd = dto.numArrowsPerEnd;
