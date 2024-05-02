@@ -23,6 +23,9 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.Map;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.instanceOf;
@@ -30,7 +33,7 @@ import static org.hamcrest.Matchers.instanceOf;
 @TestPropertySource("/application-test.properties")
 @AutoConfigureMockMvc
 @SpringBootTest
-@Transactional
+@Transactional(rollbackFor = Exception.class) // Rollback on any exceptions
 public class ArcheryRestControllerTest {
     @Autowired
     private MockMvc mockMvc;
@@ -47,27 +50,45 @@ public class ArcheryRestControllerTest {
     @Value("${sql.script.create.archer}")
     private String sqlCreateArcher;
 
-    @Value("${sql.script.delete.archer}")
-    private String sqlDeleteArcher;
-
     @Value("${sql.script.add.round1}")
     private String sqlAddRound1;
 
     @Value("${sql.script.add.round2}")
     private String sqlAddRound2;
 
+    @Value("${sql.script.clear.archers}")
+    private String sqlClearArchers;
+
+    @Value("${sql.script.clear.rounds}")
+    private String sqlClearRounds;
+
     @BeforeEach
     public void beforeEach() {
         // Adding delete to beforeEach to prevent clash on adding a
         // new archer and then afterEach immediately trying to delete
-        jdbc.execute(sqlDeleteArcher);
+        jdbc.execute(sqlClearArchers);
+        jdbc.execute(sqlClearRounds);
     }
 
+    private void debugArcherTable(String tableName) {
+        List<Map<String, Object>> table = jdbc.queryForList("SELECT * FROM " + tableName);
+
+        System.out.println("*** Debugging Table Data: " + tableName);
+        for (Map<String, Object> tableEntry : table) {
+            System.out.println("    " + tableEntry); // Print each archer record
+        }
+    }
+
+    //
+    // Archers
+    //
+
     @Test
-    public void testGetArchers_Success() throws Exception {
+    public void testGetAllArchers_Success() throws Exception {
         jdbc.execute(sqlCreateArcher);
 
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get("/api/archers");
+
         mockMvc.perform(requestBuilder)
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
@@ -76,10 +97,11 @@ public class ArcheryRestControllerTest {
     }
 
     @Test
-    public void testGetArchersById_Success() throws Exception {
+    public void testGetArcherById_Success() throws Exception {
         jdbc.execute(sqlCreateArcher);
 
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get("/api/archers/1");
+
         mockMvc.perform(requestBuilder)
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
@@ -89,6 +111,7 @@ public class ArcheryRestControllerTest {
     @Test
     public void testGetArchersById_Failure_InvalidId() throws Exception {
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get("/api/archers/2");
+
         mockMvc.perform(requestBuilder)
                 .andExpect(MockMvcResultMatchers.status().is4xxClientError())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
@@ -113,7 +136,23 @@ public class ArcheryRestControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.rounds", Matchers.nullValue()));
     }
 
-    // TODO: testAddAdditionalArcher_Success()
+    @Test
+    public void testAddAdditionalArcher_Success() throws Exception {
+        jdbc.execute(sqlCreateArcher);
+        Archer newArcher = new Archer();
+        newArcher.setName("Chris de Vera");
+
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.post("/api/archers")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(newArcher));
+
+        mockMvc.perform(requestBuilder)
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id", Matchers.is(2)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.name", Matchers.is("Chris de Vera")))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.rounds", Matchers.nullValue()));
+    }
 
     @Test
     public void testDeleteArcher_Success_NoRounds() throws Exception {
@@ -146,6 +185,10 @@ public class ArcheryRestControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.status", Matchers.is(404)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message", Matchers.is("Archer #id not found: 2")));
     }
+
+    //
+    // Rounds
+    //
 
     @Test
     public void testAddRoundForArcher_Success() throws Exception {

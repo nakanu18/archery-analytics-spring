@@ -29,12 +29,12 @@ public class ArcheryRestController {
     //
 
     @GetMapping("/archers")
-    public List<Archer> findAllArchers() {
+    public List<Archer> getAllArchers() {
         return archeryRestService.findAllArchers();
     }
 
     @GetMapping("/archers/{id}")
-    public ResponseEntity<Archer> findArcherById(@PathVariable int id) {
+    public ResponseEntity<Archer> getArcherById(@PathVariable int id) {
         Archer archer = archeryRestService.findArcherById(id);
 
         return new ResponseEntity<>(archer, HttpStatus.OK);
