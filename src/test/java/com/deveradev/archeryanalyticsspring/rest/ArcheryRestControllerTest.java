@@ -1,8 +1,7 @@
-package com.deveradev.archeryanalyticsspring;
+package com.deveradev.archeryanalyticsspring.rest;
 
 import com.deveradev.archeryanalyticsspring.entity.Archer;
 import com.deveradev.archeryanalyticsspring.entity.RoundDTO;
-import com.deveradev.archeryanalyticsspring.rest.BadRequestException;
 import com.deveradev.archeryanalyticsspring.service.ArcheryRestService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.Matchers;

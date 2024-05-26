@@ -12,15 +12,15 @@ public class RoundDTO {
     public Integer archerId;
 
     @NotNull(message = "Number of ends is required")
-    @Min(value = 1, message = "Number of ends must be 1 or greater")
+    @Min(value = 1, message = "Number of ends must be a positive integer")
     public Integer numEnds;
 
     @NotNull(message = "Number of arrows per end is required")
-    @Min(value = 1, message = "Number of arrows per end must be 1 or greater")
+    @Min(value = 1, message = "Number of arrows per end must be a positive integer")
     public Integer numArrowsPerEnd;
 
     @NotNull(message = "Distance in meters is required")
-    @Min(value = 1, message = "Distance in meters must be 1m or greater")
+    @Min(value = 1, message = "Distance must be a positive integer")
     public Integer distM;
 
     @NotNull(message = "Target size in cm is required")
